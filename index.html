@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2025 Year in Code - Squall</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #00f5ff;
+      --secondary: #7b2cbf;
+      --accent: #ff006e;
+      --dark: #0a0a0f;
+      --darker: #050508;
+      --text: #e0e0e0;
+      --text-dim: #888;
+    }
+
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background: var(--darker);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated Background */
+    .bg-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+        linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: -2;
+    }
+
+    .bg-glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(150px);
+      opacity: 0.3;
+      z-index: -1;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    .bg-glow-1 {
+      background: var(--primary);
+      top: -200px;
+      right: -200px;
+    }
+
+    .bg-glow-2 {
+      background: var(--secondary);
+      bottom: -200px;
+      left: -200px;
+      animation-delay: -10s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-50px, 50px); }
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      padding: 80px 20px 60px;
+      position: relative;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    }
+
+    .year-badge {
+      display: inline-block;
+      font-family: 'Orbitron', monospace;
+      font-size: 14px;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      padding: 8px 20px;
+      border-radius: 30px;
+      margin-bottom: 20px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      animation: pulse-border 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-border {
+      0%, 100% { box-shadow: 0 0 5px var(--primary), inset 0 0 5px transparent; }
+      50% { box-shadow: 0 0 20px var(--primary), inset 0 0 10px rgba(0, 245, 255, 0.1); }
+    }
+
+    .title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+      text-shadow: 0 0 60px rgba(0, 245, 255, 0.5);
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+    }
+
+    .username {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* Main Stats */
+    .main-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--primary);
+      box-shadow: 0 20px 40px rgba(0, 245, 255, 0.1);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+
+    .stat-icon {
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+
+    .stat-value {
+      font-family: 'Orbitron', monospace;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* Code Stats Section */
+    .code-stats {
+      max-width: 800px;
+      margin: 80px auto;
+      padding: 0 20px;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--primary), transparent);
+    }
+
+    .code-bar {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 20px;
+    }
+
+    .code-bar-label {
+      width: 80px;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+    }
+
+    .code-bar-track {
+      flex: 1;
+      height: 40px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .code-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 15px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.9rem;
+      font-weight: 700;
+      animation: slideIn 1.5s ease-out forwards;
+      transform-origin: left;
+    }
+
+    .code-bar-fill.additions {
+      background: linear-gradient(90deg, #00c853, #69f0ae);
+      color: #000;
+    }
+
+    .code-bar-fill.deletions {
+      background: linear-gradient(90deg, #ff1744, #ff5252);
+      color: #fff;
+    }
+
+    @keyframes slideIn {
+      from { transform: scaleX(0); }
+      to { transform: scaleX(1); }
+    }
+
+    .net-change {
+      text-align: center;
+      margin-top: 30px;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(123, 44, 191, 0.1));
+      border-radius: 15px;
+      border: 1px solid rgba(0, 245, 255, 0.2);
+    }
+
+    .net-change-value {
+      font-family: 'Orbitron', monospace;
+      font-size: 2rem;
+      color: #69f0ae;
+    }
+
+    .net-change-label {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+
+    /* Repository Table */
+    .repo-section {
+      max-width: 1200px;
+      margin: 80px auto;
+      padding: 0 20px;
+    }
+
+    .repo-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+    }
+
+    .repo-table th {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.8rem;
+      color: var(--primary);
+      text-align: left;
+      padding: 15px 20px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .repo-table td {
+      padding: 20px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .repo-table tr td:first-child {
+      border-radius: 10px 0 0 10px;
+    }
+
+    .repo-table tr td:last-child {
+      border-radius: 0 10px 10px 0;
+    }
+
+    .repo-table tbody tr {
+      transition: all 0.3s ease;
+    }
+
+    .repo-table tbody tr:hover td {
+      background: rgba(0, 245, 255, 0.05);
+      border-color: rgba(0, 245, 255, 0.2);
+    }
+
+    .repo-name {
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .repo-rank {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 6px;
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem;
+      color: #000;
+      font-weight: 700;
+    }
+
+    .commits-badge {
+      font-family: 'Orbitron', monospace;
+      color: var(--primary);
+    }
+
+    .additions-text {
+      color: #69f0ae;
+      font-family: 'Orbitron', monospace;
+    }
+
+    .deletions-text {
+      color: #ff5252;
+      font-family: 'Orbitron', monospace;
+    }
+
+    /* Commit Bar */
+    .commit-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .commit-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 4px;
+      transition: width 1s ease-out;
+    }
+
+    /* Footer Stats */
+    .footer-stats {
+      max-width: 1000px;
+      margin: 100px auto 50px;
+      padding: 40px 20px;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .avg-stat {
+      display: inline-block;
+      margin: 0 30px;
+    }
+
+    .avg-value {
+      font-family: 'Orbitron', monospace;
+      font-size: 3rem;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .avg-label {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+
+    .footer-note {
+      margin-top: 60px;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+    }
+
+    .footer-note a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    /* Animations */
+    .animate-in {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.8s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+    .delay-5 { animation-delay: 0.5s; }
+
+    /* Counter Animation */
+    .counter {
+      display: inline-block;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .main-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .repo-table {
+        font-size: 0.85rem;
+      }
+
+      .repo-table th, .repo-table td {
+        padding: 12px 10px;
+      }
+
+      .avg-stat {
+        display: block;
+        margin: 20px 0;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--darker);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <header class="header">
+    <div class="year-badge animate-in">Year in Review</div>
+    <h1 class="title animate-in delay-1">2025</h1>
+    <p class="subtitle animate-in delay-2">Code Contributions by <span class="username">@squall</span></p>
+  </header>
+
+  <section class="main-stats">
+    <div class="stat-card animate-in delay-1">
+      <div class="stat-icon">🔥</div>
+      <div class="stat-value"><span class="counter" data-target="2164">0</span></div>
+      <div class="stat-label">Total Contributions</div>
+    </div>
+    <div class="stat-card animate-in delay-2">
+      <div class="stat-icon">⚡</div>
+      <div class="stat-value"><span class="counter" data-target="1503">0</span></div>
+      <div class="stat-label">Commits</div>
+    </div>
+    <div class="stat-card animate-in delay-3">
+      <div class="stat-icon">📁</div>
+      <div class="stat-value"><span class="counter" data-target="19">0</span></div>
+      <div class="stat-label">Active Repos</div>
+    </div>
+    <div class="stat-card animate-in delay-4">
+      <div class="stat-icon">📅</div>
+      <div class="stat-value"><span class="counter" data-target="365">0</span></div>
+      <div class="stat-label">Days of Code</div>
+    </div>
+  </section>
+
+  <section class="code-stats">
+    <h2 class="section-title animate-in">Code Changes</h2>
+    <div class="code-bar animate-in delay-1">
+      <div class="code-bar-label">新增</div>
+      <div class="code-bar-track">
+        <div class="code-bar-fill additions" style="width: 72%;">+2,608,630</div>
+      </div>
+    </div>
+    <div class="code-bar animate-in delay-2">
+      <div class="code-bar-label">刪除</div>
+      <div class="code-bar-track">
+        <div class="code-bar-fill deletions" style="width: 28%;">-1,001,507</div>
+      </div>
+    </div>
+    <div class="net-change animate-in delay-3">
+      <div class="net-change-value">+1,607,123</div>
+      <div class="net-change-label">Net Lines of Code</div>
+    </div>
+  </section>
+
+  <section class="repo-section">
+    <h2 class="section-title animate-in">Repository Breakdown</h2>
+    <table class="repo-table">
+      <thead>
+        <tr>
+          <th>Repository</th>
+          <th>Commits</th>
+          <th>Additions</th>
+          <th>Deletions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="animate-in delay-1">
+          <td>
+            <div class="repo-name"><span class="repo-rank">1</span> soilmove_receipt</div>
+            <div class="commit-bar"><div class="commit-bar-fill" style="width: 100%;"></div></div>
+          </td>
+          <td><span class="commits-badge">474</span></td>
+          <td><span class="additions-text">+266,410</span></td>
+          <td><span class="deletions-text">-68,000</span></td>
+        </tr>
+        <tr class="animate-in delay-2">
+          <td>
+            <div class="repo-name"><span class="repo-rank">2</span> terrix</div>
+            <div class="commit-bar"><div class="commit-bar-fill" style="width: 65%;"></div></div>
+          </td>
+          <td><span class="commits-badge">309</span></td>
+          <td><span class="additions-text">+947,347</span></td>
+          <td><span class="deletions-text">-192,782</span></td>
+        </tr>
+        <tr class="animate-in delay-3">
+          <td>
+            <div class="repo-name"><span class="repo-rank">3</span> cosci-next</div>
+            <div class="commit-bar"><div class="commit-bar-fill" style="width: 63%;"></div></div>
+          </td>
+          <td><span class="commits-badge">298</span></td>
+          <td><span class="additions-text">+232,838</span></td>
+          <td><span class="deletions-text">-141,960</span></td>
+        </tr>
+        <tr class="animate-in delay-4">
+          <td>
+            <div class="repo-name"><span class="repo-rank">4</span> terrix-guard</div>
+            <div class="commit-bar"><div class="commit-bar-fill" style="width: 56%;"></div></div>
+          </td>
+          <td><span class="commits-badge">265</span></td>
+          <td><span class="additions-text">+373,463</span></td>
+          <td><span class="deletions-text">-35,474</span></td>
+        </tr>
+        <tr class="animate-in delay-5">
+          <td>
+            <div class="repo-name"><span class="repo-rank">5</span> seer-hr</div>
+            <div class="commit-bar"><div class="commit-bar-fill" style="width: 15%;"></div></div>
+          </td>
+          <td><span class="commits-badge">72</span></td>
+          <td><span class="additions-text">+232,220</span></td>
+          <td><span class="deletions-text">-17,674</span></td>
+        </tr>
+        <tr class="animate-in delay-5">
+          <td>
+            <div class="repo-name"><span class="repo-rank">6</span> soilmove2013</div>
+            <div class="commit-bar"><div class="commit-bar-fill" style="width: 14%;"></div></div>
+          </td>
+          <td><span class="commits-badge">69</span></td>
+          <td><span class="additions-text">+454,462</span></td>
+          <td><span class="deletions-text">-525,392</span></td>
+        </tr>
+        <tr class="animate-in delay-5">
+          <td>
+            <div class="repo-name"><span class="repo-rank">7</span> dfgogo</div>
+            <div class="commit-bar"><div class="commit-bar-fill" style="width: 13%;"></div></div>
+          </td>
+          <td><span class="commits-badge">64</span></td>
+          <td><span class="additions-text">+81,649</span></td>
+          <td><span class="deletions-text">-2,647</span></td>
+        </tr>
+        <tr class="animate-in delay-5">
+          <td>
+            <div class="repo-name"><span class="repo-rank">8</span> flutter-soilmove-receipt</div>
+            <div class="commit-bar"><div class="commit-bar-fill" style="width: 12%;"></div></div>
+          </td>
+          <td><span class="commits-badge">56</span></td>
+          <td><span class="additions-text">+63,625</span></td>
+          <td><span class="deletions-text">-5,430</span></td>
+        </tr>
+        <tr class="animate-in delay-5">
+          <td>
+            <div class="repo-name"><span class="repo-rank">9</span> flutter-smileMoments</div>
+            <div class="commit-bar"><div class="commit-bar-fill" style="width: 8%;"></div></div>
+          </td>
+          <td><span class="commits-badge">37</span></td>
+          <td><span class="additions-text">+58,694</span></td>
+          <td><span class="deletions-text">-8,306</span></td>
+        </tr>
+        <tr class="animate-in delay-5">
+          <td>
+            <div class="repo-name"><span class="repo-rank">10</span> ai-line-bot</div>
+            <div class="commit-bar"><div class="commit-bar-fill" style="width: 5%;"></div></div>
+          </td>
+          <td><span class="commits-badge">25</span></td>
+          <td><span class="additions-text">+58,084</span></td>
+          <td><span class="deletions-text">-251</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="footer-stats">
+    <div class="avg-stat">
+      <div class="avg-value">4.1</div>
+      <div class="avg-label">Commits / Day</div>
+    </div>
+    <div class="avg-stat">
+      <div class="avg-value">7.1K</div>
+      <div class="avg-label">Lines / Day</div>
+    </div>
+    <div class="avg-stat">
+      <div class="avg-value">79</div>
+      <div class="avg-label">Commits / Repo</div>
+    </div>
+    <p class="footer-note">
+      Generated for <a href="https://github.com/squall">github.com/squall</a> • 2025 Year in Review
+    </p>
+  </section>
+
+  <script>
+    // Counter Animation
+    const counters = document.querySelectorAll('.counter');
+    const speed = 200;
+
+    const animateCounter = (counter) => {
+      const target = +counter.getAttribute('data-target');
+      const increment = target / speed;
+
+      const updateCount = () => {
+        const count = +counter.innerText;
+        if (count < target) {
+          counter.innerText = Math.ceil(count + increment);
+          setTimeout(updateCount, 10);
+        } else {
+          counter.innerText = target.toLocaleString();
+        }
+      };
+      updateCount();
+    };
+
+    // Intersection Observer for animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const counter = entry.target.querySelector('.counter');
+          if (counter && counter.innerText === '0') {
+            animateCounter(counter);
+          }
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.stat-card').forEach(card => {
+      observer.observe(card);
+    });
+
+    // Parallax effect for glows
+    document.addEventListener('mousemove', (e) => {
+      const glows = document.querySelectorAll('.bg-glow');
+      const x = e.clientX / window.innerWidth;
+      const y = e.clientY / window.innerHeight;
+
+      glows.forEach((glow, index) => {
+        const speed = index === 0 ? 30 : -30;
+        glow.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
+      });
+    });
+  </script>
+</body>
+</html>
