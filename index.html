@@ -570,6 +570,31 @@
       text-decoration: none;
     }
 
+    .visitor-counter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 30px;
+      padding: 15px 25px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 30px;
+      display: inline-flex;
+    }
+
+    .visitor-counter img {
+      height: 24px;
+      border-radius: 4px;
+    }
+
+    .visitor-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      letter-spacing: 1px;
+    }
+
     /* Animations */
     .animate-in {
       opacity: 0;
@@ -1181,6 +1206,10 @@
     <p class="footer-note">
       Generated for <a href="https://github.com/squall">github.com/squall</a> • 2025 Year in Review
     </p>
+    <div class="visitor-counter">
+      <span class="visitor-label">VISITORS</span>
+      <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fsquall.github.io%2F2025-year-review&count_bg=%2300F5FF&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=&edge_flat=true" alt="visitor count"/>
+    </div>
   </section>
 
   <script>
