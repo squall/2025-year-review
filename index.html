@@ -595,23 +595,315 @@
       display: inline-block;
     }
 
-    /* Responsive */
+    /* Responsive - Tablet */
+    @media (max-width: 1024px) {
+      .heatmap-container {
+        padding: 20px;
+      }
+
+      .heatmap-cell {
+        width: 11px;
+        height: 11px;
+      }
+
+      .heatmap-stats {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .repo-table th:nth-child(3),
+      .repo-table td:nth-child(3),
+      .repo-table th:nth-child(4),
+      .repo-table td:nth-child(4) {
+        display: none;
+      }
+    }
+
+    /* Responsive - Mobile */
     @media (max-width: 768px) {
+      .header {
+        padding: 50px 15px 40px;
+      }
+
+      .title {
+        font-size: 3rem;
+      }
+
+      .subtitle {
+        font-size: 1rem;
+      }
+
       .main-stats {
         grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        padding: 0 15px;
+      }
+
+      .stat-card {
+        padding: 20px 15px;
+      }
+
+      .stat-value {
+        font-size: 1.8rem;
+      }
+
+      .stat-label {
+        font-size: 0.7rem;
+        letter-spacing: 1px;
+      }
+
+      .code-stats {
+        margin: 50px auto;
+        padding: 0 15px;
+      }
+
+      .section-title {
+        font-size: 1.2rem;
+      }
+
+      .code-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .code-bar-label {
+        width: auto;
+      }
+
+      .code-bar-track {
+        width: 100%;
+        height: 35px;
+      }
+
+      .code-bar-fill {
+        font-size: 0.8rem;
+      }
+
+      .net-change-value {
+        font-size: 1.5rem;
+      }
+
+      /* Heatmap Mobile */
+      .heatmap-section {
+        margin: 50px auto;
+        padding: 0 15px;
+      }
+
+      .heatmap-container {
+        padding: 15px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .heatmap-wrapper {
+        min-width: 900px;
+      }
+
+      .heatmap-cell {
+        width: 10px;
+        height: 10px;
+      }
+
+      .heatmap-day-label {
+        font-size: 0.5rem;
+        height: 10px;
+        line-height: 10px;
+      }
+
+      .heatmap-legend {
+        justify-content: center;
+        margin-top: 15px;
+        min-width: 900px;
+      }
+
+      .heatmap-stats {
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: space-around;
+        min-width: auto;
+      }
+
+      .heatmap-stat {
+        flex: 0 0 40%;
+      }
+
+      .heatmap-stat-value {
+        font-size: 1.2rem;
+      }
+
+      .heatmap-stat-label {
+        font-size: 0.7rem;
+      }
+
+      /* Repository Table Mobile */
+      .repo-section {
+        margin: 50px auto;
+        padding: 0 15px;
       }
 
       .repo-table {
-        font-size: 0.85rem;
+        display: block;
       }
 
-      .repo-table th, .repo-table td {
-        padding: 12px 10px;
+      .repo-table thead {
+        display: none;
+      }
+
+      .repo-table tbody {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .repo-table tr {
+        display: flex;
+        flex-wrap: wrap;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 15px;
+        padding: 15px;
+      }
+
+      .repo-table td {
+        background: none !important;
+        border: none !important;
+        padding: 5px 0;
+      }
+
+      .repo-table td:first-child {
+        flex: 0 0 100%;
+        border-radius: 0;
+      }
+
+      .repo-table td:nth-child(2) {
+        flex: 0 0 100%;
+        margin-top: 10px;
+      }
+
+      .repo-table td:nth-child(2)::before {
+        content: 'Commits: ';
+        color: var(--text-dim);
+        font-size: 0.8rem;
+      }
+
+      .repo-table td:nth-child(3),
+      .repo-table td:nth-child(4) {
+        display: inline-block;
+        flex: 0 0 50%;
+      }
+
+      .repo-table td:nth-child(3)::before {
+        content: '+';
+        display: none;
+      }
+
+      .commit-bar {
+        margin-top: 10px;
+      }
+
+      /* Footer Mobile */
+      .footer-stats {
+        margin: 60px auto 30px;
+        padding: 30px 15px;
       }
 
       .avg-stat {
         display: block;
         margin: 20px 0;
+      }
+
+      .avg-value {
+        font-size: 2rem;
+      }
+
+      .footer-note {
+        margin-top: 40px;
+      }
+    }
+
+    /* Responsive - Small Mobile */
+    @media (max-width: 480px) {
+      .title {
+        font-size: 2.5rem;
+      }
+
+      .year-badge {
+        font-size: 11px;
+        padding: 6px 15px;
+        letter-spacing: 2px;
+      }
+
+      .main-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .stat-card {
+        padding: 15px 10px;
+      }
+
+      .stat-icon {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+      }
+
+      .stat-value {
+        font-size: 1.5rem;
+      }
+
+      .stat-label {
+        font-size: 0.6rem;
+      }
+
+      .heatmap-cell {
+        width: 9px;
+        height: 9px;
+        border-radius: 2px;
+      }
+
+      .heatmap-wrapper {
+        min-width: 850px;
+      }
+
+      .repo-name {
+        font-size: 0.9rem;
+      }
+
+      .repo-rank {
+        width: 20px;
+        height: 20px;
+        font-size: 0.6rem;
+      }
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) {
+      .heatmap-cell:hover {
+        transform: none;
+      }
+
+      .heatmap-cell::after {
+        display: none;
+      }
+
+      .stat-card:hover {
+        transform: none;
+      }
+    }
+
+    /* Landscape phone */
+    @media (max-width: 900px) and (orientation: landscape) {
+      .header {
+        padding: 30px 20px;
+      }
+
+      .main-stats {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .stat-card {
+        padding: 15px;
       }
     }
 
