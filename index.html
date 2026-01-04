@@ -287,6 +287,149 @@
       margin-top: 5px;
     }
 
+    /* Contribution Heatmap */
+    .heatmap-section {
+      max-width: 1100px;
+      margin: 80px auto;
+      padding: 0 20px;
+    }
+
+    .heatmap-container {
+      background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 30px;
+      overflow-x: auto;
+    }
+
+    .heatmap-wrapper {
+      display: flex;
+      gap: 15px;
+    }
+
+    .heatmap-months {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 10px;
+      padding-left: 35px;
+    }
+
+    .heatmap-month {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .heatmap-days {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding-top: 5px;
+    }
+
+    .heatmap-day-label {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.6rem;
+      color: var(--text-dim);
+      height: 13px;
+      line-height: 13px;
+    }
+
+    .heatmap-grid {
+      display: flex;
+      gap: 3px;
+    }
+
+    .heatmap-week {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .heatmap-cell {
+      width: 13px;
+      height: 13px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .heatmap-cell:hover {
+      transform: scale(1.3);
+      z-index: 10;
+    }
+
+    .heatmap-cell[data-level="1"] { background: rgba(0, 245, 255, 0.2); }
+    .heatmap-cell[data-level="2"] { background: rgba(0, 245, 255, 0.4); }
+    .heatmap-cell[data-level="3"] { background: rgba(0, 245, 255, 0.6); }
+    .heatmap-cell[data-level="4"] { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+
+    .heatmap-cell::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--dark);
+      border: 1px solid var(--primary);
+      color: var(--text);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 100;
+    }
+
+    .heatmap-cell:hover::after {
+      opacity: 1;
+    }
+
+    .heatmap-legend {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 5px;
+      margin-top: 20px;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .heatmap-legend-cell {
+      width: 13px;
+      height: 13px;
+      border-radius: 3px;
+    }
+
+    .heatmap-stats {
+      display: flex;
+      gap: 30px;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .heatmap-stat {
+      text-align: center;
+    }
+
+    .heatmap-stat-value {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.5rem;
+      color: var(--primary);
+    }
+
+    .heatmap-stat-label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 5px;
+    }
+
     /* Repository Table */
     .repo-section {
       max-width: 1200px;
@@ -541,6 +684,52 @@
     </div>
   </section>
 
+  <section class="heatmap-section">
+    <h2 class="section-title animate-in">Contribution Heatmap</h2>
+    <div class="heatmap-container animate-in delay-1">
+      <div class="heatmap-months" id="heatmap-months"></div>
+      <div class="heatmap-wrapper">
+        <div class="heatmap-days">
+          <div class="heatmap-day-label"></div>
+          <div class="heatmap-day-label">Mon</div>
+          <div class="heatmap-day-label"></div>
+          <div class="heatmap-day-label">Wed</div>
+          <div class="heatmap-day-label"></div>
+          <div class="heatmap-day-label">Fri</div>
+          <div class="heatmap-day-label"></div>
+        </div>
+        <div class="heatmap-grid" id="heatmap-grid"></div>
+      </div>
+      <div class="heatmap-legend">
+        <span>Less</span>
+        <div class="heatmap-legend-cell" style="background: rgba(255,255,255,0.05);"></div>
+        <div class="heatmap-legend-cell" style="background: rgba(0, 245, 255, 0.2);"></div>
+        <div class="heatmap-legend-cell" style="background: rgba(0, 245, 255, 0.4);"></div>
+        <div class="heatmap-legend-cell" style="background: rgba(0, 245, 255, 0.6);"></div>
+        <div class="heatmap-legend-cell" style="background: #00f5ff; box-shadow: 0 0 5px #00f5ff;"></div>
+        <span>More</span>
+      </div>
+      <div class="heatmap-stats">
+        <div class="heatmap-stat">
+          <div class="heatmap-stat-value" id="max-streak">0</div>
+          <div class="heatmap-stat-label">Max Streak</div>
+        </div>
+        <div class="heatmap-stat">
+          <div class="heatmap-stat-value" id="active-days">0</div>
+          <div class="heatmap-stat-label">Active Days</div>
+        </div>
+        <div class="heatmap-stat">
+          <div class="heatmap-stat-value" id="busiest-day">-</div>
+          <div class="heatmap-stat-label">Busiest Day</div>
+        </div>
+        <div class="heatmap-stat">
+          <div class="heatmap-stat-value" id="max-contributions">0</div>
+          <div class="heatmap-stat-label">Max in a Day</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="repo-section">
     <h2 class="section-title animate-in">Repository Breakdown</h2>
     <table class="repo-table">
@@ -713,6 +902,134 @@
         glow.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
       });
     });
+
+    // Contribution Heatmap Data
+    const contributionData = [{"date":"2025-01-01","contributionCount":4},{"date":"2025-01-02","contributionCount":0},{"date":"2025-01-03","contributionCount":0},{"date":"2025-01-04","contributionCount":1},{"date":"2025-01-05","contributionCount":9},{"date":"2025-01-06","contributionCount":14},{"date":"2025-01-07","contributionCount":0},{"date":"2025-01-08","contributionCount":2},{"date":"2025-01-09","contributionCount":9},{"date":"2025-01-10","contributionCount":0},{"date":"2025-01-11","contributionCount":14},{"date":"2025-01-12","contributionCount":2},{"date":"2025-01-13","contributionCount":0},{"date":"2025-01-14","contributionCount":5},{"date":"2025-01-15","contributionCount":0},{"date":"2025-01-16","contributionCount":0},{"date":"2025-01-17","contributionCount":0},{"date":"2025-01-18","contributionCount":0},{"date":"2025-01-19","contributionCount":0},{"date":"2025-01-20","contributionCount":1},{"date":"2025-01-21","contributionCount":0},{"date":"2025-01-22","contributionCount":1},{"date":"2025-01-23","contributionCount":0},{"date":"2025-01-24","contributionCount":0},{"date":"2025-01-25","contributionCount":2},{"date":"2025-01-26","contributionCount":0},{"date":"2025-01-27","contributionCount":1},{"date":"2025-01-28","contributionCount":0},{"date":"2025-01-29","contributionCount":1},{"date":"2025-01-30","contributionCount":0},{"date":"2025-01-31","contributionCount":1},{"date":"2025-02-01","contributionCount":0},{"date":"2025-02-02","contributionCount":0},{"date":"2025-02-03","contributionCount":0},{"date":"2025-02-04","contributionCount":1},{"date":"2025-02-05","contributionCount":1},{"date":"2025-02-06","contributionCount":1},{"date":"2025-02-07","contributionCount":0},{"date":"2025-02-08","contributionCount":1},{"date":"2025-02-09","contributionCount":0},{"date":"2025-02-10","contributionCount":0},{"date":"2025-02-11","contributionCount":0},{"date":"2025-02-12","contributionCount":0},{"date":"2025-02-13","contributionCount":1},{"date":"2025-02-14","contributionCount":0},{"date":"2025-02-15","contributionCount":0},{"date":"2025-02-16","contributionCount":1},{"date":"2025-02-17","contributionCount":0},{"date":"2025-02-18","contributionCount":0},{"date":"2025-02-19","contributionCount":5},{"date":"2025-02-20","contributionCount":0},{"date":"2025-02-21","contributionCount":0},{"date":"2025-02-22","contributionCount":0},{"date":"2025-02-23","contributionCount":0},{"date":"2025-02-24","contributionCount":1},{"date":"2025-02-25","contributionCount":0},{"date":"2025-02-26","contributionCount":0},{"date":"2025-02-27","contributionCount":0},{"date":"2025-02-28","contributionCount":0},{"date":"2025-03-01","contributionCount":3},{"date":"2025-03-02","contributionCount":0},{"date":"2025-03-03","contributionCount":0},{"date":"2025-03-04","contributionCount":1},{"date":"2025-03-05","contributionCount":1},{"date":"2025-03-06","contributionCount":1},{"date":"2025-03-07","contributionCount":0},{"date":"2025-03-08","contributionCount":13},{"date":"2025-03-09","contributionCount":3},{"date":"2025-03-10","contributionCount":5},{"date":"2025-03-11","contributionCount":3},{"date":"2025-03-12","contributionCount":8},{"date":"2025-03-13","contributionCount":0},{"date":"2025-03-14","contributionCount":0},{"date":"2025-03-15","contributionCount":3},{"date":"2025-03-16","contributionCount":2},{"date":"2025-03-17","contributionCount":9},{"date":"2025-03-18","contributionCount":0},{"date":"2025-03-19","contributionCount":4},{"date":"2025-03-20","contributionCount":1},{"date":"2025-03-21","contributionCount":4},{"date":"2025-03-22","contributionCount":0},{"date":"2025-03-23","contributionCount":3},{"date":"2025-03-24","contributionCount":1},{"date":"2025-03-25","contributionCount":1},{"date":"2025-03-26","contributionCount":0},{"date":"2025-03-27","contributionCount":1},{"date":"2025-03-28","contributionCount":0},{"date":"2025-03-29","contributionCount":0},{"date":"2025-03-30","contributionCount":0},{"date":"2025-03-31","contributionCount":6},{"date":"2025-04-01","contributionCount":2},{"date":"2025-04-02","contributionCount":0},{"date":"2025-04-03","contributionCount":0},{"date":"2025-04-04","contributionCount":0},{"date":"2025-04-05","contributionCount":0},{"date":"2025-04-06","contributionCount":4},{"date":"2025-04-07","contributionCount":0},{"date":"2025-04-08","contributionCount":3},{"date":"2025-04-09","contributionCount":0},{"date":"2025-04-10","contributionCount":0},{"date":"2025-04-11","contributionCount":0},{"date":"2025-04-12","contributionCount":4},{"date":"2025-04-13","contributionCount":0},{"date":"2025-04-14","contributionCount":4},{"date":"2025-04-15","contributionCount":2},{"date":"2025-04-16","contributionCount":0},{"date":"2025-04-17","contributionCount":0},{"date":"2025-04-18","contributionCount":0},{"date":"2025-04-19","contributionCount":0},{"date":"2025-04-20","contributionCount":0},{"date":"2025-04-21","contributionCount":0},{"date":"2025-04-22","contributionCount":7},{"date":"2025-04-23","contributionCount":0},{"date":"2025-04-24","contributionCount":3},{"date":"2025-04-25","contributionCount":0},{"date":"2025-04-26","contributionCount":0},{"date":"2025-04-27","contributionCount":0},{"date":"2025-04-28","contributionCount":2},{"date":"2025-04-29","contributionCount":15},{"date":"2025-04-30","contributionCount":1},{"date":"2025-05-01","contributionCount":9},{"date":"2025-05-02","contributionCount":0},{"date":"2025-05-03","contributionCount":0},{"date":"2025-05-04","contributionCount":0},{"date":"2025-05-05","contributionCount":6},{"date":"2025-05-06","contributionCount":1},{"date":"2025-05-07","contributionCount":3},{"date":"2025-05-08","contributionCount":0},{"date":"2025-05-09","contributionCount":3},{"date":"2025-05-10","contributionCount":0},{"date":"2025-05-11","contributionCount":0},{"date":"2025-05-12","contributionCount":2},{"date":"2025-05-13","contributionCount":1},{"date":"2025-05-14","contributionCount":0},{"date":"2025-05-15","contributionCount":0},{"date":"2025-05-16","contributionCount":2},{"date":"2025-05-17","contributionCount":3},{"date":"2025-05-18","contributionCount":4},{"date":"2025-05-19","contributionCount":0},{"date":"2025-05-20","contributionCount":4},{"date":"2025-05-21","contributionCount":8},{"date":"2025-05-22","contributionCount":8},{"date":"2025-05-23","contributionCount":22},{"date":"2025-05-24","contributionCount":0},{"date":"2025-05-25","contributionCount":0},{"date":"2025-05-26","contributionCount":0},{"date":"2025-05-27","contributionCount":0},{"date":"2025-05-28","contributionCount":0},{"date":"2025-05-29","contributionCount":15},{"date":"2025-05-30","contributionCount":17},{"date":"2025-05-31","contributionCount":25},{"date":"2025-06-01","contributionCount":0},{"date":"2025-06-02","contributionCount":5},{"date":"2025-06-03","contributionCount":4},{"date":"2025-06-04","contributionCount":4},{"date":"2025-06-05","contributionCount":6},{"date":"2025-06-06","contributionCount":17},{"date":"2025-06-07","contributionCount":6},{"date":"2025-06-08","contributionCount":0},{"date":"2025-06-09","contributionCount":1},{"date":"2025-06-10","contributionCount":6},{"date":"2025-06-11","contributionCount":5},{"date":"2025-06-12","contributionCount":0},{"date":"2025-06-13","contributionCount":0},{"date":"2025-06-14","contributionCount":0},{"date":"2025-06-15","contributionCount":0},{"date":"2025-06-16","contributionCount":5},{"date":"2025-06-17","contributionCount":0},{"date":"2025-06-18","contributionCount":21},{"date":"2025-06-19","contributionCount":0},{"date":"2025-06-20","contributionCount":8},{"date":"2025-06-21","contributionCount":2},{"date":"2025-06-22","contributionCount":27},{"date":"2025-06-23","contributionCount":2},{"date":"2025-06-24","contributionCount":0},{"date":"2025-06-25","contributionCount":11},{"date":"2025-06-26","contributionCount":0},{"date":"2025-06-27","contributionCount":5},{"date":"2025-06-28","contributionCount":0},{"date":"2025-06-29","contributionCount":0},{"date":"2025-06-30","contributionCount":2},{"date":"2025-07-01","contributionCount":0},{"date":"2025-07-02","contributionCount":4},{"date":"2025-07-03","contributionCount":0},{"date":"2025-07-04","contributionCount":0},{"date":"2025-07-05","contributionCount":0},{"date":"2025-07-06","contributionCount":0},{"date":"2025-07-07","contributionCount":1},{"date":"2025-07-08","contributionCount":2},{"date":"2025-07-09","contributionCount":1},{"date":"2025-07-10","contributionCount":1},{"date":"2025-07-11","contributionCount":3},{"date":"2025-07-12","contributionCount":0},{"date":"2025-07-13","contributionCount":6},{"date":"2025-07-14","contributionCount":0},{"date":"2025-07-15","contributionCount":1},{"date":"2025-07-16","contributionCount":0},{"date":"2025-07-17","contributionCount":3},{"date":"2025-07-18","contributionCount":1},{"date":"2025-07-19","contributionCount":2},{"date":"2025-07-20","contributionCount":1},{"date":"2025-07-21","contributionCount":18},{"date":"2025-07-22","contributionCount":11},{"date":"2025-07-23","contributionCount":9},{"date":"2025-07-24","contributionCount":8},{"date":"2025-07-25","contributionCount":0},{"date":"2025-07-26","contributionCount":0},{"date":"2025-07-27","contributionCount":0},{"date":"2025-07-28","contributionCount":4},{"date":"2025-07-29","contributionCount":5},{"date":"2025-07-30","contributionCount":22},{"date":"2025-07-31","contributionCount":6},{"date":"2025-08-01","contributionCount":18},{"date":"2025-08-02","contributionCount":19},{"date":"2025-08-03","contributionCount":30},{"date":"2025-08-04","contributionCount":20},{"date":"2025-08-05","contributionCount":20},{"date":"2025-08-06","contributionCount":14},{"date":"2025-08-07","contributionCount":10},{"date":"2025-08-08","contributionCount":50},{"date":"2025-08-09","contributionCount":22},{"date":"2025-08-10","contributionCount":23},{"date":"2025-08-11","contributionCount":19},{"date":"2025-08-12","contributionCount":3},{"date":"2025-08-13","contributionCount":17},{"date":"2025-08-14","contributionCount":9},{"date":"2025-08-15","contributionCount":2},{"date":"2025-08-16","contributionCount":21},{"date":"2025-08-17","contributionCount":1},{"date":"2025-08-18","contributionCount":9},{"date":"2025-08-19","contributionCount":15},{"date":"2025-08-20","contributionCount":13},{"date":"2025-08-21","contributionCount":10},{"date":"2025-08-22","contributionCount":1},{"date":"2025-08-23","contributionCount":10},{"date":"2025-08-24","contributionCount":14},{"date":"2025-08-25","contributionCount":9},{"date":"2025-08-26","contributionCount":12},{"date":"2025-08-27","contributionCount":18},{"date":"2025-08-28","contributionCount":8},{"date":"2025-08-29","contributionCount":0},{"date":"2025-08-30","contributionCount":18},{"date":"2025-08-31","contributionCount":6},{"date":"2025-09-01","contributionCount":5},{"date":"2025-09-02","contributionCount":3},{"date":"2025-09-03","contributionCount":9},{"date":"2025-09-04","contributionCount":0},{"date":"2025-09-05","contributionCount":0},{"date":"2025-09-06","contributionCount":0},{"date":"2025-09-07","contributionCount":0},{"date":"2025-09-08","contributionCount":0},{"date":"2025-09-09","contributionCount":0},{"date":"2025-09-10","contributionCount":1},{"date":"2025-09-11","contributionCount":3},{"date":"2025-09-12","contributionCount":0},{"date":"2025-09-13","contributionCount":0},{"date":"2025-09-14","contributionCount":4},{"date":"2025-09-15","contributionCount":0},{"date":"2025-09-16","contributionCount":0},{"date":"2025-09-17","contributionCount":2},{"date":"2025-09-18","contributionCount":0},{"date":"2025-09-19","contributionCount":2},{"date":"2025-09-20","contributionCount":0},{"date":"2025-09-21","contributionCount":7},{"date":"2025-09-22","contributionCount":9},{"date":"2025-09-23","contributionCount":1},{"date":"2025-09-24","contributionCount":5},{"date":"2025-09-25","contributionCount":4},{"date":"2025-09-26","contributionCount":0},{"date":"2025-09-27","contributionCount":8},{"date":"2025-09-28","contributionCount":0},{"date":"2025-09-29","contributionCount":13},{"date":"2025-09-30","contributionCount":0},{"date":"2025-10-01","contributionCount":1},{"date":"2025-10-02","contributionCount":2},{"date":"2025-10-03","contributionCount":0},{"date":"2025-10-04","contributionCount":9},{"date":"2025-10-05","contributionCount":10},{"date":"2025-10-06","contributionCount":15},{"date":"2025-10-07","contributionCount":0},{"date":"2025-10-08","contributionCount":13},{"date":"2025-10-09","contributionCount":11},{"date":"2025-10-10","contributionCount":23},{"date":"2025-10-11","contributionCount":4},{"date":"2025-10-12","contributionCount":10},{"date":"2025-10-13","contributionCount":4},{"date":"2025-10-14","contributionCount":5},{"date":"2025-10-15","contributionCount":5},{"date":"2025-10-16","contributionCount":2},{"date":"2025-10-17","contributionCount":9},{"date":"2025-10-18","contributionCount":5},{"date":"2025-10-19","contributionCount":22},{"date":"2025-10-20","contributionCount":0},{"date":"2025-10-21","contributionCount":4},{"date":"2025-10-22","contributionCount":6},{"date":"2025-10-23","contributionCount":1},{"date":"2025-10-24","contributionCount":7},{"date":"2025-10-25","contributionCount":21},{"date":"2025-10-26","contributionCount":21},{"date":"2025-10-27","contributionCount":12},{"date":"2025-10-28","contributionCount":10},{"date":"2025-10-29","contributionCount":15},{"date":"2025-10-30","contributionCount":3},{"date":"2025-10-31","contributionCount":0},{"date":"2025-11-01","contributionCount":10},{"date":"2025-11-02","contributionCount":5},{"date":"2025-11-03","contributionCount":7},{"date":"2025-11-04","contributionCount":13},{"date":"2025-11-05","contributionCount":6},{"date":"2025-11-06","contributionCount":8},{"date":"2025-11-07","contributionCount":4},{"date":"2025-11-08","contributionCount":6},{"date":"2025-11-09","contributionCount":9},{"date":"2025-11-10","contributionCount":12},{"date":"2025-11-11","contributionCount":19},{"date":"2025-11-12","contributionCount":5},{"date":"2025-11-13","contributionCount":3},{"date":"2025-11-14","contributionCount":7},{"date":"2025-11-15","contributionCount":1},{"date":"2025-11-16","contributionCount":34},{"date":"2025-11-17","contributionCount":23},{"date":"2025-11-18","contributionCount":3},{"date":"2025-11-19","contributionCount":4},{"date":"2025-11-20","contributionCount":0},{"date":"2025-11-21","contributionCount":5},{"date":"2025-11-22","contributionCount":7},{"date":"2025-11-23","contributionCount":2},{"date":"2025-11-24","contributionCount":19},{"date":"2025-11-25","contributionCount":25},{"date":"2025-11-26","contributionCount":5},{"date":"2025-11-27","contributionCount":9},{"date":"2025-11-28","contributionCount":4},{"date":"2025-11-29","contributionCount":47},{"date":"2025-11-30","contributionCount":32},{"date":"2025-12-01","contributionCount":16},{"date":"2025-12-02","contributionCount":26},{"date":"2025-12-03","contributionCount":10},{"date":"2025-12-04","contributionCount":17},{"date":"2025-12-05","contributionCount":10},{"date":"2025-12-06","contributionCount":35},{"date":"2025-12-07","contributionCount":11},{"date":"2025-12-08","contributionCount":26},{"date":"2025-12-09","contributionCount":29},{"date":"2025-12-10","contributionCount":3},{"date":"2025-12-11","contributionCount":18},{"date":"2025-12-12","contributionCount":10},{"date":"2025-12-13","contributionCount":14},{"date":"2025-12-14","contributionCount":23},{"date":"2025-12-15","contributionCount":15},{"date":"2025-12-16","contributionCount":15},{"date":"2025-12-17","contributionCount":2},{"date":"2025-12-18","contributionCount":28},{"date":"2025-12-19","contributionCount":30},{"date":"2025-12-20","contributionCount":8},{"date":"2025-12-21","contributionCount":1},{"date":"2025-12-22","contributionCount":25},{"date":"2025-12-23","contributionCount":17},{"date":"2025-12-24","contributionCount":6},{"date":"2025-12-25","contributionCount":30},{"date":"2025-12-26","contributionCount":7},{"date":"2025-12-27","contributionCount":12},{"date":"2025-12-28","contributionCount":1},{"date":"2025-12-29","contributionCount":8},{"date":"2025-12-30","contributionCount":17},{"date":"2025-12-31","contributionCount":15}];
+
+    // Build heatmap
+    function buildHeatmap() {
+      const grid = document.getElementById('heatmap-grid');
+      const monthsContainer = document.getElementById('heatmap-months');
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+      // Create data map
+      const dataMap = {};
+      contributionData.forEach(d => { dataMap[d.date] = d.contributionCount; });
+
+      // Find max for level calculation
+      const maxCount = Math.max(...contributionData.map(d => d.contributionCount));
+
+      // Get level (0-4)
+      const getLevel = (count) => {
+        if (count === 0) return 0;
+        if (count <= maxCount * 0.25) return 1;
+        if (count <= maxCount * 0.5) return 2;
+        if (count <= maxCount * 0.75) return 3;
+        return 4;
+      };
+
+      // Start from Jan 1, 2025
+      const startDate = new Date('2025-01-01');
+      const endDate = new Date('2025-12-31');
+
+      // Adjust to start of week (Sunday)
+      const firstDay = new Date(startDate);
+      firstDay.setDate(firstDay.getDate() - firstDay.getDay());
+
+      let currentDate = new Date(firstDay);
+      let currentMonth = -1;
+      let weekCount = 0;
+
+      while (currentDate <= endDate || currentDate.getDay() !== 0) {
+        const week = document.createElement('div');
+        week.className = 'heatmap-week';
+
+        for (let i = 0; i < 7; i++) {
+          const cell = document.createElement('div');
+          cell.className = 'heatmap-cell';
+
+          const dateStr = currentDate.toISOString().split('T')[0];
+          const count = dataMap[dateStr] || 0;
+          const isInRange = currentDate >= startDate && currentDate <= endDate;
+
+          if (isInRange) {
+            cell.setAttribute('data-level', getLevel(count));
+            cell.setAttribute('data-tooltip', `${dateStr}: ${count} contributions`);
+          } else {
+            cell.style.visibility = 'hidden';
+          }
+
+          // Track months for labels
+          if (isInRange && currentDate.getMonth() !== currentMonth && currentDate.getDate() <= 7) {
+            currentMonth = currentDate.getMonth();
+            const monthLabel = document.createElement('span');
+            monthLabel.className = 'heatmap-month';
+            monthLabel.textContent = months[currentMonth];
+            monthLabel.style.marginLeft = weekCount === 0 ? '0' : `${(weekCount - (currentMonth === 0 ? 0 : 1)) * 0}px`;
+            monthsContainer.appendChild(monthLabel);
+          }
+
+          week.appendChild(cell);
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        grid.appendChild(week);
+        weekCount++;
+
+        if (currentDate > endDate && currentDate.getDay() === 0) break;
+      }
+
+      // Position month labels
+      const weekWidth = 16; // 13px cell + 3px gap
+      let monthPositions = [];
+      let checkDate = new Date('2025-01-01');
+      for (let m = 0; m < 12; m++) {
+        const firstOfMonth = new Date(2025, m, 1);
+        const dayOfYear = Math.floor((firstOfMonth - startDate) / (1000 * 60 * 60 * 24));
+        const weekOfYear = Math.floor((dayOfYear + startDate.getDay()) / 7);
+        monthPositions.push(weekOfYear);
+      }
+
+      monthsContainer.innerHTML = '';
+      months.forEach((month, idx) => {
+        const span = document.createElement('span');
+        span.className = 'heatmap-month';
+        span.textContent = month;
+        span.style.position = 'absolute';
+        span.style.left = `${35 + monthPositions[idx] * weekWidth}px`;
+        monthsContainer.appendChild(span);
+      });
+      monthsContainer.style.position = 'relative';
+      monthsContainer.style.height = '20px';
+
+      // Calculate stats
+      let activeDays = 0;
+      let maxStreak = 0;
+      let currentStreak = 0;
+      let maxContributions = 0;
+      let busiestDate = '';
+
+      contributionData.forEach(d => {
+        if (d.contributionCount > 0) {
+          activeDays++;
+          currentStreak++;
+          maxStreak = Math.max(maxStreak, currentStreak);
+          if (d.contributionCount > maxContributions) {
+            maxContributions = d.contributionCount;
+            busiestDate = d.date;
+          }
+        } else {
+          currentStreak = 0;
+        }
+      });
+
+      document.getElementById('max-streak').textContent = maxStreak;
+      document.getElementById('active-days').textContent = activeDays;
+      document.getElementById('busiest-day').textContent = busiestDate.slice(5);
+      document.getElementById('max-contributions').textContent = maxContributions;
+    }
+
+    buildHeatmap();
   </script>
 </body>
 </html>
